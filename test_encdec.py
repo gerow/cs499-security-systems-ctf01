@@ -10,6 +10,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
   order to be compatible the EncryptorDecryptor must
   use some default values to generate a key if
   no arguments are provided
+  @author gerow
   """
   def setUp(self):
     self.enc_decs = []
@@ -60,6 +61,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
 class MonoalphabeticTestCase(unittest.TestCase):
   """
   Test case to specifically test the Monoalphabetic implementation
+  @author gerow
   """
   def setUp(self):
     self.ma_instance = encdec.Monoalphabetic()

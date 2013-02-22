@@ -7,6 +7,7 @@ import pickle
 class EncryptorDecryptor:
   """
   A simple interface that encryption classes should support
+  @author gerow
   """
   
   def set_key(self, key):
@@ -55,6 +56,7 @@ class EncryptorDecryptor:
 class Monoalphabetic(EncryptorDecryptor):
   """
   Implemtation of EncryptorDecryptor that provides monoalphabetic ciphers
+  @author gerow
   """
   def __init__(self):
     """
