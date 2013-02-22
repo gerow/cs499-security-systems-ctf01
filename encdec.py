@@ -52,7 +52,7 @@ class EncryptorDecryptor:
     """
     raise NotImplementedError("An EncryptorDecryptor must implement this")
 
-class Monoalphabetic:
+class Monoalphabetic(EncryptorDecryptor):
   def __init__(self):
     self.__key = {}
     self.__inv_key = {}
