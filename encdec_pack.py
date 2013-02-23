@@ -3,6 +3,14 @@
 import util
 
 class Packer:
+  """
+  This class is designed to allow us to pack all the allowed
+  values in this excersize into their minimal 5 bit values.
+  While this does make things slightly harder to solve, it also
+  makes it to where some of our ciphers are more effective at lower
+  key sizes (specifically substitution ciphers)
+  @author gerow
+  """
   def __init__(self):
     self.__generate_packing_dict()
     self.__generate_inv_packing_dict()

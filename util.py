@@ -5,11 +5,11 @@ import binascii
 import math
 
 def rand_pop(elements):
-    """
-    Randomly pop an element from elements and return it
-    """
-    random.shuffle(elements)
-    return elements.pop(0)
+  """
+  Randomly pop an element from elements and return it
+  """
+  random.shuffle(elements)
+  return elements.pop(0)
 
 def long_to_byte_string(l, length):
   """
