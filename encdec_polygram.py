@@ -89,8 +89,8 @@ class Polygram(EncryptorDecryptor):
     key['length'] = 0
     key['blocks'] = {}
     if args == None:
-      # Default to 8 bit blocks
-      args = 7 
+      # Default to 9 bit blocks
+      args = 9 
     key['length'] = args
 
     # First geneate a list of symbols
