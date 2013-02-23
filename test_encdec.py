@@ -3,6 +3,7 @@
 import unittest
 import encdec
 import util
+import copy
 
 class BasicEncryptionTestCase(unittest.TestCase):
   """
@@ -18,6 +19,10 @@ class BasicEncryptionTestCase(unittest.TestCase):
     self.enc_decs.append(encdec.Monoalphabetic())
     self.enc_decs.append(encdec.Polygram())
 
+    self.other_enc_decs = []
+    for enc_dec in self.enc_decs:
+      self.other_enc_decs.append(copy.deepcopy(enc_dec))
+
   def assert_encrypt_text(self, text):
     """
     Small function to help us out.  Just tries encrypting and
@@ -32,6 +37,18 @@ class BasicEncryptionTestCase(unittest.TestCase):
           'incorrect decryption using ' + str(enc_dec) +
           "  Expected " + str(plaintext)  + ", got " +
           str(decryptedtext) )
+
+  def assert_save_to_file(self, text):
+    plaintext = text
+    for i, enc_dec in enumerate(self.enc_decs):
+      enc_dec.set_key(enc_dec.generate_key(None))
+      ciphertext = enc_dec.encrypt(plaintext)
+      enc_dec.dump_key(".testkey.temp")
+      other_enc_dec = self.other_enc_decs[i]
+      other_enc_dec.load_key(".testkey.temp")
+      decryptedText = other_enc_dec.decrypt(ciphertext)
+      self.assertEqual(text, decryptedText, 'incorrect decryption ' +
+      'after loading key from file using ' + str(enc_dec))
 
 
   def test_hello(self):
@@ -59,6 +76,33 @@ class BasicEncryptionTestCase(unittest.TestCase):
     Same reasoning as test_double_complete
     """
     self.assert_encrypt_text("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
+
+  def test_file_hello(self):
+    """
+    Most basic test.  Just encrypts hello and sees
+    if it is able to decrypt back.
+    """
+    self.assert_save_to_file("hello")
+
+  def test_file_complete(self):
+    """
+    Test all the availible symbol set
+    """
+    self.assert_save_to_file("abcdefghijklmnopqrstuvwxyz.,!? ")
+
+  def test_file_double_complete(self):
+    """
+    Test all the availible symbol set twice.  This might help test
+    polyalphabetic of stream siphers
+    """
+    self.assert_save_to_file("abcdefghijklmnopqrstuvwxyz.,!? " * 2)
+
+  def test_file_triple_complete(self):
+    """
+    Same reasoning as test_double_complete
+    """
+    self.assert_save_to_file("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
+
 
   def tearDown(self):
     self.enc_decs = None
