@@ -149,6 +149,43 @@ class PackingAndConvertingTestCase(unittest.TestCase):
     packed_again_string = util.long_to_byte_string(longval, length)
     unpacked_string = self.p.unpack(packed_again_string)
     self.assertEqual(string, unpacked_string, string + " and " + unpacked_string + " are not equal!")
-    
+
+class PolygramTestCase(unittest.TestCase):
+  def setUp(self):
+    self.p = encdec.Polygram()
+
+  def assert_different_block_sizes(self, plaintext):
+    for i in range(1, 10):
+      self.p.set_key(self.p.generate_key(i))
+      ciphertext = self.p.encrypt(plaintext)
+      decrypted_ciphertext = self.p.decrypt(ciphertext)
+      self.assertEqual(plaintext, decrypted_ciphertext, 'Failed polygram decryption ' +
+          'with different block sizes!')
+
+  def test_hello_different_block_sizes(self):
+    plaintext = "hello"
+    self.assert_different_block_sizes(plaintext)
+
+  def test_complete_different_block_sizes(self):
+    """
+    Test all the availible symbol set
+    """
+    self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? ")
+
+  def test_double_complete_different_block_sizes(self):
+    """
+    Test all the availible symbol set twice.  This might help test
+    polyalphabetic of stream siphers
+    """
+    self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 2)
+
+  def test_triple_complete_different_block_sizes(self):
+    """
+    Same reasoning as test_double_complete
+    """
+    self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
+
+
+
 if __name__ == "__main__":
   unittest.main()
