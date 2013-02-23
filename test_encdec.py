@@ -69,5 +69,25 @@ class MonoalphabeticTestCase(unittest.TestCase):
   def tearDown(self):
     self.ma_instance = None
 
+class PackerTestCase(unittest.TestCase):
+  def setUp(self):
+    self.p = encdec.Packer()
+
+  def test_basic_packing(self):
+    plaintext = "hello"
+    packed_bytes = self.p.pack(plaintext)
+    unpacked_bytes = self.p.unpack(packed_bytes)
+    self.assertEqual(unpacked_bytes, "hello")
+
+  def test_full_packing(self):
+    plaintext = "abcdefghijklmnopqrstuvwxyz.,!? " * 3
+    packed_bytes = self.p.pack(plaintext)
+    unpacked_bytes = self.p.unpack(packed_bytes)
+    self.assertEqual(unpacked_bytes, plaintext)
+
+
+  def tearDown(self):
+    self.p = None
+    
 if __name__ == "__main__":
   unittest.main()
