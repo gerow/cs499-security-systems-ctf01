@@ -3,6 +3,8 @@
 import copy
 import math
 import pickle
+from collections import deque
+import random
 
 import util
 
@@ -100,9 +102,14 @@ class Polygram(EncryptorDecryptor):
     for i in range(2**key['length']):
       symbols.append(i)
 
+    random.shuffle(symbols)
+    symbols = deque(symbols)
+    # Using a deque gives us O(1) pop
+    # operations
+
     # Now randomly grab them
     for i in range(2**key['length']):
-      key['blocks'][i] = util.rand_pop(symbols)
+      key['blocks'][i] = symbols.pop()
 
     return key
 

@@ -155,7 +155,7 @@ class PolygramTestCase(unittest.TestCase):
     self.p = encdec.Polygram()
 
   def assert_different_block_sizes(self, plaintext):
-    for i in range(1, 10):
+    for i in range(1, 19):
       self.p.set_key(self.p.generate_key(i))
       ciphertext = self.p.encrypt(plaintext)
       decrypted_ciphertext = self.p.decrypt(ciphertext)
