@@ -10,7 +10,7 @@ def generate_keys():
 
   # Now let's make a large polygram key with packing
   e = encdec.Polygram()
-  e.set_key(e.generate_key(23))
+  e.set_key(e.generate_key(15))
   e.dump_key("keys/pg.key")
 
   # Now turn off packing
