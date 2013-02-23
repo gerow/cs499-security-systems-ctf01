@@ -21,10 +21,10 @@ class Polygram(EncryptorDecryptor):
     self.key = {}
     self.key['length'] = 0
     self.key['blocks'] = {}
+    self.key['packing'] = True
     self.inv_blocks = {}
     self.packer = Packer()
     self.block_mask = 0
-    self.packing = True
 
   def set_key(self, key):
     """
@@ -48,7 +48,7 @@ class Polygram(EncryptorDecryptor):
   def encrypt(self, plaintext):
     # First we should pack the data
     # into a long using our packer
-    if self.packing:
+    if self.key['packing']:
       blocks = self.packer.pack(plaintext)
     else:
       blocks = plaintext
@@ -74,7 +74,7 @@ class Polygram(EncryptorDecryptor):
       shift += self.key['length']
 
     byte_string = util.long_to_byte_string(output, length)
-    if self.packing:
+    if self.key['packing']:
       unpacked_value = self.packer.unpack(byte_string)
     else:
       unpacked_value = byte_string
@@ -88,6 +88,8 @@ class Polygram(EncryptorDecryptor):
     key = {}
     key['length'] = 0
     key['blocks'] = {}
+    # Default to packing enabled
+    key['packing'] = True
     if args == None:
       # Default to 9 bit blocks
       args = 9 
@@ -113,7 +115,7 @@ class Polygram(EncryptorDecryptor):
       self.set_key(pickle.load(f))
 
   def disable_packing(self):
-    self.packing = False
+    self.key['packing'] = False
   
   def enable_packing(self):
-    self.packing = True
+    self.key['packing'] = True

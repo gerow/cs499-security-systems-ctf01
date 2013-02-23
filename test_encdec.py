@@ -184,7 +184,33 @@ class PolygramTestCase(unittest.TestCase):
     Same reasoning as test_double_complete
     """
     self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
+    
+  def test_hello_no_packing(self):
+    plaintext = "hello"
+    self.p.disable_packing()
+    self.assert_different_block_sizes(plaintext)
 
+  def test_complete_no_packing(self):
+    """
+    Test all the availible symbol set
+    """
+    self.p.disable_packing()
+    self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? ")
+
+  def test_double_complete_no_packing(self):
+    """
+    Test all the availible symbol set twice.  This might help test
+    polyalphabetic of stream siphers
+    """
+    self.p.disable_packing()
+    self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 2)
+
+  def test_triple_complete_no_packing(self):
+    """
+    Same reasoning as test_double_complete
+    """
+    self.p.disable_packing()
+    self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
 
 
 if __name__ == "__main__":
