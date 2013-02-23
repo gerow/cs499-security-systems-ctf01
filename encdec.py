@@ -52,3 +52,4 @@ class EncryptorDecryptor:
 # Import monoalphabetic to be a part of this package
 from encdec_monoalphabetic import Monoalphabetic
 from encdec_pack import Packer
+from encdec_polygram import Polygram

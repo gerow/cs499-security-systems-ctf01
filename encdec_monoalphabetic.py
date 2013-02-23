@@ -3,6 +3,9 @@
 import copy
 import random
 import pickle
+
+import util
+
 from encdec import *
 
 class Monoalphabetic(EncryptorDecryptor):
@@ -16,13 +19,6 @@ class Monoalphabetic(EncryptorDecryptor):
     """
     self.__key = {}
     self.__inv_key = {}
-
-  def __rand_pop(self, elements):
-    """
-    Randomly pop an element from elements and return it
-    """
-    random.shuffle(elements)
-    return elements.pop(0)
 
   def __generate_inv_key(self):
     """
@@ -70,7 +66,7 @@ class Monoalphabetic(EncryptorDecryptor):
     symbols_availible = copy.copy(symbols) 
     key = {}
     for symbol in symbols:
-      key[symbol] = self.__rand_pop(symbols_availible)
+      key[symbol] = util.rand_pop(symbols_availible)
     return key
 
   def dump_key(self, filename):

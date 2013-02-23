@@ -2,6 +2,7 @@
 
 import unittest
 import encdec
+import util
 
 class BasicEncryptionTestCase(unittest.TestCase):
   """
@@ -15,6 +16,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
   def setUp(self):
     self.enc_decs = []
     self.enc_decs.append(encdec.Monoalphabetic())
+    self.enc_decs.append(encdec.Polygram())
 
   def assert_encrypt_text(self, text):
     """
@@ -25,8 +27,11 @@ class BasicEncryptionTestCase(unittest.TestCase):
     for enc_dec in self.enc_decs:
       enc_dec.set_key(enc_dec.generate_key(None))
       ciphertext = enc_dec.encrypt(plaintext)
-      self.assertEqual(enc_dec.decrypt(ciphertext), plaintext,
-          'incorrect decryption using ' + str(enc_dec))
+      decryptedtext = enc_dec.decrypt(ciphertext)
+      self.assertEqual(decryptedtext, plaintext,
+          'incorrect decryption using ' + str(enc_dec) +
+          "  Expected " + str(plaintext)  + ", got " +
+          str(decryptedtext) )
 
 
   def test_hello(self):
@@ -88,6 +93,18 @@ class PackerTestCase(unittest.TestCase):
 
   def tearDown(self):
     self.p = None
+
+class PackingAndConvertingTestCase(unittest.TestCase):
+  def setUp(self):
+    self.p = encdec.Packer()
+
+  def test_packing_and_converting(self):
+    string = "abcdefghijklmnopqrstuvqxyz,.? "
+    packed_string = self.p.pack(string)
+    longval, length = util.byte_string_to_long(packed_string)
+    packed_again_string = util.long_to_byte_string(longval, length)
+    unpacked_string = self.p.unpack(packed_again_string)
+    self.assertEqual(string, unpacked_string, string + " and " + unpacked_string + " are not equal!")
     
 if __name__ == "__main__":
   unittest.main()

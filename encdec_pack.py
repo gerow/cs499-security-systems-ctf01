@@ -1,3 +1,7 @@
+#!/usr/bin/python
+
+import util
+
 class Packer:
   def __init__(self):
     self.__generate_packing_dict()
@@ -53,7 +57,7 @@ class Packer:
     block ciphers even if the block size is relatively small.
     It returns the value as a long
     """
-    # Since we only have 31 symbols we only need 5 bits to represent each one
+    # Since we only have 31 symbols (32 with EOF) we only need 5 bits to represent each one
     b = 0 
     for i, c in enumerate(text):
       shift = 5 * i
@@ -61,15 +65,19 @@ class Packer:
 
     shift += 5
     b |= (self.__packing_dict["EOF"] << shift)
-    return b
+    return util.long_to_byte_string(b, shift * 5)
 
-  def unpack(self, number):
+  def unpack(self, byte_string):
     shift = 0
     string = ""
-    while True:
+
+    number, length = util.byte_string_to_long(byte_string)
+    while shift < length:
       val = (number >> shift) & 0x1f
       c = self.__inv_packing_dict[val]
       if c == "EOF":
         return string
       string += c
       shift += 5
+
+    return string
