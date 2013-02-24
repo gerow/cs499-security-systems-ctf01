@@ -104,6 +104,12 @@ class BasicEncryptionTestCase(unittest.TestCase):
     """
     self.assert_save_to_file("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
 
+  def test_3000_words(self):
+    """
+    This is to test algorithms that may loop around and depend upon
+    synchronization
+    """
+    self.assert_encrypt_text("abcdefghijklmnopqrstuvqxzy.,!? " * 120)
 
   def tearDown(self):
     self.enc_decs = None
