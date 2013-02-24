@@ -74,7 +74,7 @@ def load_encdec(encdec_type, filename):
     #e = encdec.Homophonic()
     raise NotImplementedError("That encryption type is not implemented yet")
   elif encdec_type == "pg":
-    return encdec.Polygram()
+    e = encdec.Polygram()
   elif encdec_type == "st":
     #e = encdec.Stream()
     raise NotImplementedError("That encryption type is not implemented yet")
