@@ -38,3 +38,4 @@ if __name__ == "__main__":
       message = util.strip_invalid_symbols(message)
     encrypted_message = e.encrypt(message)
     cli.send(str(sequence_number) + "|" + encrypted_message)
+    sequence_number += len(message)
