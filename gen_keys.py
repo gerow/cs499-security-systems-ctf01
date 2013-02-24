@@ -17,5 +17,11 @@ def generate_keys():
   e.disable_packing()
   e.dump_key("keys/pg_nopacking.key")
 
+  # Now let's generate a polyalphabetic key
+  # with 1000 alphabets
+  e = encdec.Polyalphabetic()
+  e.set_key(e.generate_key(1000))
+  e.dump_key("keys/pa.key")
+
 if __name__ == "__main__":
   generate_keys()

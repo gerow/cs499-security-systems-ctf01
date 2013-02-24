@@ -69,8 +69,7 @@ def load_encdec(encdec_type, filename):
   if encdec_type == "ma":
     e = encdec.Monoalphabetic()
   elif encdec_type == "pa":
-    #e = encdec.Polyalphabetic()
-    raise NotImplementedError("That encryption type is not implemented yet")
+    e = encdec.Polyalphabetic()
   elif encdec_type == "hp":
     #e = encdec.Homophonic()
     raise NotImplementedError("That encryption type is not implemented yet")
