@@ -57,6 +57,7 @@ def load_encdec(encdec_type, filename):
   hp -- Homophonic
   pg -- Polygram
   st -- Stream
+  no -- No (for testing)
 
   We ignore case for the type just to make things easier for the user.
   """
@@ -78,6 +79,8 @@ def load_encdec(encdec_type, filename):
   elif encdec_type == "st":
     #e = encdec.Stream()
     raise NotImplementedError("That encryption type is not implemented yet")
+  elif encdec_type == "no":
+    e = encdec.No()
   else:
     raise ValueError("Invalid encryption type")
 
