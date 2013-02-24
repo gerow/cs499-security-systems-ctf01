@@ -9,9 +9,9 @@ import encdec
 """
 The symbols that are allowed for sending and receiving
 """
-SYMBOLS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+SYMBOLS = ("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
            "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
-           "y", "z", ".", ",", "!", "?", " "]
+           "y", "z", ".", ",", "!", "?", " ")
 
 def rand_pop(elements):
   """

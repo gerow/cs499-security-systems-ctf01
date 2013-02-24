@@ -18,6 +18,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
     self.enc_decs = []
     self.enc_decs.append(encdec.Monoalphabetic())
     self.enc_decs.append(encdec.Polygram())
+    self.enc_decs.append(encdec.Polyalphabetic())
 
     self.other_enc_decs = []
     for enc_dec in self.enc_decs:

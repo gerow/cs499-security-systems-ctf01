@@ -54,3 +54,4 @@ from encdec_monoalphabetic import Monoalphabetic
 from encdec_pack import Packer
 from encdec_polygram import Polygram
 from encdec_no import No
+from encdec_polyalphabetic import Polyalphabetic
