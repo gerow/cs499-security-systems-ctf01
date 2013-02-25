@@ -37,7 +37,7 @@ class Stream(EncryptorDecryptor):
                ciphers.append(fallOut)
                key.insert(0, itemInsert)
          out = ""
-         
+         self.__key = key
          position = plaintext.__len__() * 8 - 1
          for c in plaintext:
                  num = 0
@@ -55,6 +55,7 @@ class Stream(EncryptorDecryptor):
                fallOut = inv_key.pop()
                deciphers.append(fallOut)
                inv_key.insert(0, itemInsert)
+         self.__inv_key = inv_key
          out = ""
          position = ciphertext.__len__() * 8 - 1
          for c in ciphertext:

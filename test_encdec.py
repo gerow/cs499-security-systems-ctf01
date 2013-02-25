@@ -42,8 +42,8 @@ class BasicEncryptionTestCase(unittest.TestCase):
     plaintext = text
     for i, enc_dec in enumerate(self.enc_decs):
       enc_dec.set_key(enc_dec.generate_key(None))
-      ciphertext = enc_dec.encrypt(plaintext)
       enc_dec.dump_key(".testkey.temp")
+      ciphertext = enc_dec.encrypt(plaintext)
       other_enc_dec = self.other_enc_decs[i]
       other_enc_dec.load_key(".testkey.temp")
       decryptedText = other_enc_dec.decrypt(ciphertext)
