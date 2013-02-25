@@ -36,10 +36,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
       enc_dec.set_key(enc_dec.generate_key(None))
       ciphertext = enc_dec.encrypt(plaintext)
       decryptedtext = enc_dec.decrypt(ciphertext)
-      self.assertEqual(decryptedtext, plaintext,
-          'incorrect decryption using ' + str(enc_dec) +
-          "  Expected " + str(plaintext)  + ", got " +
-          str(decryptedtext) )
+      self.assertEqual(decryptedtext, plaintext)
 
   def assert_save_to_file(self, text):
     plaintext = text
@@ -50,8 +47,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
       other_enc_dec = self.other_enc_decs[i]
       other_enc_dec.load_key(".testkey.temp")
       decryptedText = other_enc_dec.decrypt(ciphertext)
-      self.assertEqual(text, decryptedText, 'incorrect decryption ' +
-      'after loading key from file using ' + str(enc_dec))
+      self.assertEqual(text, decryptedText)
 
 
   def test_hello(self):
@@ -157,7 +153,7 @@ class PackingAndConvertingTestCase(unittest.TestCase):
     longval, length = util.byte_string_to_long(packed_string)
     packed_again_string = util.long_to_byte_string(longval, length)
     unpacked_string = self.p.unpack(packed_again_string)
-    self.assertEqual(string, unpacked_string, string + " and " + unpacked_string + " are not equal!")
+    self.assertEqual(string, unpacked_string)
 
 class PolygramTestCase(unittest.TestCase):
   def setUp(self):
@@ -168,8 +164,7 @@ class PolygramTestCase(unittest.TestCase):
       self.p.set_key(self.p.generate_key(i))
       ciphertext = self.p.encrypt(plaintext)
       decrypted_ciphertext = self.p.decrypt(ciphertext)
-      self.assertEqual(plaintext, decrypted_ciphertext, 'Failed polygram decryption ' +
-          'with different block sizes!')
+      self.assertEqual(plaintext, decrypted_ciphertext)
 
   def test_hello_different_block_sizes(self):
     plaintext = "hello"

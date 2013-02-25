@@ -22,8 +22,7 @@ class DictcheckTestCase(unittest.TestCase):
              ("encryption", True))
     for word in words:
       truth_value = self.d.word_in_dict(word[0])
-      self.assertEqual(truth_value,word[1],
-          "truth values for word_in_dict do not match! (got " + str(truth_value) + " expected " + str(word[1]))
+      self.assertEqual(truth_value, word[1])
 
   def test_fraction_chars_in_dict(self):
     strings = (("hello there this is words!", 1.0),
@@ -31,8 +30,7 @@ class DictcheckTestCase(unittest.TestCase):
 
     for string in strings:
       frac = self.d.fraction_chars_in_dict(string[0])
-      self.assertEqual(frac, string[1],
-          "fractions do not match for " + string[0] + ". got " + str(frac) + " expected " + str(string[1]))
+      self.assertEqual(frac, string[1])
 
   def tearDown(self):
     self.d = None
