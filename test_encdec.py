@@ -21,7 +21,6 @@ class BasicEncryptionTestCase(unittest.TestCase):
     self.enc_decs.append(encdec.Polyalphabetic())
     self.enc_decs.append(encdec.Stream())
     self.enc_decs.append(encdec.Homophonic())
-    self.enc_decs.append(encdec.Stream())
 
     self.other_enc_decs = []
     for enc_dec in self.enc_decs:
