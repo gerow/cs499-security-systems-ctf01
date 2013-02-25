@@ -2,7 +2,7 @@
 
 import os
 
-class EncryptionCracker:
+class EncryptionCracker(object):
   """
   A base class that encryption crackers should implement.
   The main thing it does is provide a way to seamlessly work

@@ -2,7 +2,7 @@
 
 import random
 
-class FibbLFSR():
+class FibbLFSR(object):
   """
   An implementation of a 16 bit lsfr
   """

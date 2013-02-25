@@ -2,7 +2,7 @@
 
 import util
 
-class Dictcheck:
+class Dictcheck(object):
   """
   This class provides a handful of useful
   utilities for checking strings against

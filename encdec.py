@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-class EncryptorDecryptor:
+class EncryptorDecryptor(object):
   """
   A simple interface that encryption classes should support
   @author gerow
