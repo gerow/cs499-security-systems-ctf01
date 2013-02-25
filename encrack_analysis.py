@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
+import encrack
+
 class Analysis:
   def __init__(self):
-    pass
+    self.d = encrack.Dictcheck()
 
   def frequency_report(self, messages):
     """
@@ -62,3 +64,18 @@ class Analysis:
       if message_problem:
         return problems
     return []
+
+  def fraction_chars_in_dict(self, messages):
+    """
+    Works much like the one in dictcheck except it
+    operates on an array of messages
+    """
+    output = 0.0
+    total_len = 0
+    for m in messages:
+      total_len += len(m)
+
+    for m in messages:
+      output = self.d.fraction_chars_in_dict(m) * (float(len(m))/total_len)
+
+    return output

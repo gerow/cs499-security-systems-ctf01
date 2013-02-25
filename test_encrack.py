@@ -121,5 +121,31 @@ class AnalysisTestCase(unittest.TestCase):
   def tearDown(self):
     self.a = None
 
+class AnalysisTestCase(unittest.TestCase):
+  def setUp(self):
+    self.a = encrack.Analysis()
+
+  def test_detect_odd_space_none(self):
+    no_odd_space = ["there is no odd space in this message",
+                    "nor is there in this one!"]
+    self.assertEqual([], self.a.detect_odd_space(no_odd_space))
+
+  def test_detect_odd_space_middle(self):
+    middle_odd_space = ["no odd space here",
+                        "but there  is in here"]
+    expected_array = [[], [9]]
+
+    self.assertEqual(expected_array, self.a.detect_odd_space(middle_odd_space))
+
+  def test_detect_odd_space_beginning_and_end(self):
+    odd_space = [" odd space at beginning",
+                 "odd space at end "]
+
+    expected_array = [[0], [16]]
+    self.assertEqual(expected_array, self.a.detect_odd_space(odd_space))
+
+  def tearDown(self):
+    self.a = None
+
 if __name__ == "__main__":
   unittest.main()
