@@ -109,6 +109,14 @@ class BasicEncryptionTestCase(unittest.TestCase):
     """
     self.assert_encrypt_text("abcdefghijklmnopqrstuvqxzy.,!? " * 120)
 
+  def test_encrypt_decrypt_multiple_times(self):
+    """
+    This just makes sure that algorithms that keep a kind of state
+    do so properly
+    """
+    for i in range(5):
+      self.assert_encrypt_text("abcdefghijklmnopqrstuvwxyz.,!? ")
+
   def tearDown(self):
     self.enc_decs = None
 
