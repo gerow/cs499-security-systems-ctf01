@@ -28,5 +28,10 @@ def generate_keys():
   e.set_key(e.generate_key(None))
   e.dump_key("keys/st.key")
 
+  # Great, finally make a homophonic key
+  e = encdec.Homophonic()
+  e.set_key(e.generate_key(None))
+  e.dump_key("keys/hp.key")
+
 if __name__ == "__main__":
   generate_keys()
