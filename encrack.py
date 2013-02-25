@@ -56,3 +56,4 @@ class EncryptionCracker:
     raise NotImplementedError("An encryptoin cracker must implement the crack method")
 
 from encrack_dictcheck import Dictcheck
+from encrack_analysis import Analysis

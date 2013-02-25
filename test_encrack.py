@@ -93,5 +93,35 @@ class EncryptionCrackerTestCase(unittest.TestCase):
     self.e = None
     shutil.rmtree("temp_test")
 
+class AnalysisTestCase(unittest.TestCase):
+  def setUp(self):
+    self.a = encrack.Analysis()
+
+  def test_frequency_report(self):
+    message0 = "hello there"
+    message1 = "alright, neato"
+
+    t = len(message0) + len(message1)
+
+    e = { "h":3.0/t,
+          "e":4.0/t,
+          "l":3.0/t,
+          "o":2.0/t,
+          " ":2.0/t,
+          "t":3.0/t,
+          "r":2.0/t,
+          "a":2.0/t,
+          "i":1.0/t,
+          "g":1.0/t,
+          ",":1.0/t,
+          "n":1.0/t
+        }
+    report = self.a.frequency_report([message0, message1])
+
+    self.assertEqual(e, report)
+
+  def tearDown(self):
+    self.a = None
+
 if __name__ == "__main__":
   unittest.main()
