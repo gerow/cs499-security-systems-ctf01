@@ -45,13 +45,13 @@ class Dictcheck:
     is stripped
     """
     # Check if len is 0 (so we don't overflow on accident)
+    string = util.strip_punctuation(string)
     if len(string) == 0:
       return 0.0
     words = string.split()
     good_chars = 0
     total_chars = 0
     for word in words:
-      word = util.strip_punctuation(word)
       total_chars += len(word)
       if self.word_in_dict(word):
         good_chars += len(word)
