@@ -2,6 +2,9 @@
 
 import unittest
 import encrack
+import os
+import shutil
+import time
 
 class DictcheckTestCase(unittest.TestCase):
   """
@@ -33,6 +36,62 @@ class DictcheckTestCase(unittest.TestCase):
 
   def tearDown(self):
     self.d = None
+
+class EncryptionCrackerTestCase(unittest.TestCase):
+  def setUp(self):
+    self.e = encrack.EncryptionCracker("temp_test")
+    os.mkdir("temp_test")
+
+  def test_encryption_cracker_load_messages(self):
+    # Make two files in temp_test in some order
+    first_message = "this is the first message"
+    second_message = "this is the second message"
+    with open(os.path.join("temp_test", "test0"), "w") as f:
+      f.write(first_message)
+    time.sleep(0.1)
+    with open(os.path.join("temp_test", "test1"), "w") as f:
+      f.write(second_message)
+    self.e.load_new_messages()
+
+    self.assertEqual(2, len(self.e.messages))
+    self.assertEqual(first_message, self.e.messages[0])
+    self.assertEqual(second_message, self.e.messages[1])
+
+  def test_encryption_cracker_load_new_messages(self):
+    # First make one file
+    first_message = "first message"
+    second_message = "second message"
+    third_message = "yeah, a third message!"
+
+    with open(os.path.join("temp_test", "test0"), "w") as f:
+      f.write(first_message)
+    # Sleep to make sure the mtimes are far enough
+    # apart
+    time.sleep(0.1)
+
+    # Now get it to load this one
+    self.e.load_new_messages()
+
+    self.assertEqual(1, len(self.e.messages))
+    self.assertEqual(first_message, self.e.messages[0])
+
+    # Now add two more
+    with open(os.path.join("temp_test", "test1"), "w") as f:
+      f.write(second_message)
+    # Sleep to make sure the mtimes are far enough apart
+    time.sleep(0.1)
+    with open(os.path.join("temp_test", "test2"), "w") as f:
+      f.write(third_message)
+
+    self.e.load_new_messages()
+
+    self.assertEqual(3, len(self.e.messages))
+    self.assertEqual(second_message, self.e.messages[1])
+    self.assertEqual(third_message, self.e.messages[2])
+
+  def tearDown(self):
+    self.e = None
+    shutil.rmtree("temp_test")
 
 if __name__ == "__main__":
   unittest.main()

@@ -28,21 +28,26 @@ class EncryptionCracker:
     the algorithm can do initialization stuff
     on the messages if needed
     """
-    filenames = os.listdir(self.directory)
-    files_to_add = []
-    for filename in filenames:
-      if filename not in self.seen_files:
-        self.seen_files.add(filename)
-        path = os.path.join(self.directory, filename)
-        with open(path, "r") as f:
-          filestring = f.read()
-        mtime = os.path.getmtime(path)
-        files_to_add.append([filestring, mtime])
-    # Sort the list by mtime (using lambda!)
-    files_to_add.sort(key=lambda tup: tup[1])
-    for filestr in files_to_add:
-      self.messages.append(filestr)
-    return files_to_add
+    try:
+      filenames = os.listdir(self.directory)
+      files_to_add = []
+      for filename in filenames:
+        if filename not in self.seen_files:
+          self.seen_files.add(filename)
+          path = os.path.join(self.directory, filename)
+          with open(path, "r") as f:
+            filestring = f.read()
+          mtime = os.path.getmtime(path)
+          files_to_add.append([filestring, mtime])
+      # Sort the list by mtime (using lambda!)
+      files_to_add.sort(key=lambda tup: tup[1])
+      for filestr in files_to_add:
+        self.messages.append(filestr[0])
+      return files_to_add
+    except OSError, IOError:
+      # We weren't able to read the file for some
+      # reason.  Go ahead an ignore this for now
+      return []
 
   def crack(self):
     """
