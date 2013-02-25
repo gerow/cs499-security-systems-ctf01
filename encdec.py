@@ -55,3 +55,6 @@ from encdec_pack import Packer
 from encdec_polygram import Polygram
 from encdec_no import No
 from encdec_polyalphabetic import Polyalphabetic
+from encdec_homophonic import Homophonic
+from encdec_streamcipher import Stream
+from encdec_fibb_lfsr import FibbLFSR

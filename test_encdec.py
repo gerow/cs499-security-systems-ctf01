@@ -19,6 +19,9 @@ class BasicEncryptionTestCase(unittest.TestCase):
     self.enc_decs.append(encdec.Monoalphabetic())
     self.enc_decs.append(encdec.Polygram())
     self.enc_decs.append(encdec.Polyalphabetic())
+    self.enc_decs.append(encdec.Stream())
+    self.enc_decs.append(encdec.Homophonic())
+    self.enc_decs.append(encdec.Stream())
 
     self.other_enc_decs = []
     for enc_dec in self.enc_decs:
@@ -162,7 +165,7 @@ class PolygramTestCase(unittest.TestCase):
     self.p = encdec.Polygram()
 
   def assert_different_block_sizes(self, plaintext):
-    for i in range(1, 19):
+    for i in range(1, 12):
       self.p.set_key(self.p.generate_key(i))
       ciphertext = self.p.encrypt(plaintext)
       decrypted_ciphertext = self.p.decrypt(ciphertext)
@@ -219,6 +222,15 @@ class PolygramTestCase(unittest.TestCase):
     self.p.disable_packing()
     self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
 
+class LFSRTestCase(unittest.TestCase):
+  """
+  Test the lfsr (mainly just check for syntax errors)
+  """
+  def test_lfsr(self):
+    l = encdec.FibbLFSR()
+    l.set_key(l.generate_key())
+    for i in range(500):
+      l.pop_byte
 
 if __name__ == "__main__":
   unittest.main()

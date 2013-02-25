@@ -111,3 +111,16 @@ def strip_invalid_symbols(string):
       output += c
 
   return output
+
+def strip_punctuation(string):
+  """
+  Strip all punctuation from the string and return the stripped
+  version
+  """
+  punctuation = [".", ",", "!", "?"]
+  output = ""
+  for c in string:
+    if c not in punctuation:
+      output += c
+
+  return output
