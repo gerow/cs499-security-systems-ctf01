@@ -19,8 +19,8 @@ class BasicEncryptionTestCase(unittest.TestCase):
     self.enc_decs.append(encdec.Monoalphabetic())
     self.enc_decs.append(encdec.Polygram())
     self.enc_decs.append(encdec.Polyalphabetic())
-    self.enc_decs.append(encdec.Streamcipher())
-    self.enc_decs.append(encdec.HomophonicAlphabet())
+    self.enc_decs.append(encdec.Stream())
+    self.enc_decs.append(encdec.Homophonic())
     self.enc_decs.append(encdec.Stream())
 
     self.other_enc_decs = []

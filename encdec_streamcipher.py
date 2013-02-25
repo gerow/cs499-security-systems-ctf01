@@ -1,6 +1,5 @@
 import random
 import util
-import key
 import pickle
 from encdec import*
 

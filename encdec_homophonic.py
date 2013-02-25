@@ -1,10 +1,9 @@
 import random
 import util
-import key
 import pickle
 from encdec import*
 
-class HomophonicAlphabet(EncryptorDecryptor):
+class Homophonic(EncryptorDecryptor):
      """
      Implemtation of EncryptorDecryptor that provides homophonic ciphers
      @author jiachenz
