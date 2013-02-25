@@ -23,5 +23,10 @@ def generate_keys():
   e.set_key(e.generate_key(1000))
   e.dump_key("keys/pa.key")
 
+  # Ok, now make a stream cipher key
+  e = encdec.Stream()
+  e.set_key(e.generate_key(None))
+  e.dump_key("keys/st.key")
+
 if __name__ == "__main__":
   generate_keys()

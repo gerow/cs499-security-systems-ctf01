@@ -20,7 +20,7 @@ class BasicEncryptionTestCase(unittest.TestCase):
     self.enc_decs.append(encdec.Polygram())
     self.enc_decs.append(encdec.Polyalphabetic())
     self.enc_decs.append(encdec.Stream())
-    self.enc_decs.append(encdec.Homophonic())
+    self.enc_decs.append(encdec.Polyphonic())
 
     self.other_enc_decs = []
     for enc_dec in self.enc_decs:
@@ -225,6 +225,27 @@ class LFSRTestCase(unittest.TestCase):
     l.set_key(l.generate_key())
     for i in range(500):
       l.pop_byte
+
+class StreamTestCase(unittest.TestCase):
+  """
+  Test to make sure the stream cipher doesn't
+  reset the key every time.
+  """
+  def setUp(self):
+    self.st = encdec.Stream()
+    self.st.set_key(self.st.generate_key(None))
+
+  def test_no_key_reset(self):
+    # Try it 200 times just in case
+    output = self.st.encrypt("a")
+    for i in range(200):
+      if self.st.encrypt("a") != output:
+        return
+    self.fail("Stream cipher seems to reset key every time encrypt is called")
+
+  def tearDown(self):
+    self.st = None
+    
 
 if __name__ == "__main__":
   unittest.main()

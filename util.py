@@ -71,13 +71,11 @@ def load_encdec(encdec_type, filename):
   elif encdec_type == "pa":
     e = encdec.Polyalphabetic()
   elif encdec_type == "hp":
-    #e = encdec.Homophonic()
-    raise NotImplementedError("That encryption type is not implemented yet")
+    e = encdec.Homophonic()
   elif encdec_type == "pg":
     e = encdec.Polygram()
   elif encdec_type == "st":
-    #e = encdec.Stream()
-    raise NotImplementedError("That encryption type is not implemented yet")
+    e = encdec.Stream()
   elif encdec_type == "no":
     e = encdec.No()
   else:
