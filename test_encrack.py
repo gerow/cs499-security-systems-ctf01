@@ -144,6 +144,13 @@ class AnalysisTestCase(unittest.TestCase):
     expected_array = [[0], [16]]
     self.assertEqual(expected_array, self.a.detect_odd_space(odd_space))
 
+  def test_fraction_chars_in_dict(self):
+    simple_frac = ["hello, lkje",
+                   "and, there"]
+    e = 13.0 / 17.0
+
+    self.assertEqual(e, self.a.fraction_chars_in_dict(simple_frac))
+
   def tearDown(self):
     self.a = None
 

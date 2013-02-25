@@ -71,11 +71,26 @@ class Analysis:
     operates on an array of messages
     """
     output = 0.0
-    total_len = 0
-    for m in messages:
-      total_len += len(m)
+    count, counts = self.__count_letters(messages)
+    total_len = count
 
-    for m in messages:
-      output = self.d.fraction_chars_in_dict(m) * (float(len(m))/total_len)
+    for i, m in enumerate(messages):
+      weight = float(counts[i])/total_len
+      output += self.d.fraction_chars_in_dict(m) * weight
 
     return output
+  
+  def __count_letters(self, messages):
+    letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i","j",
+               "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+               "u", "v", "w", "x", "y", "z"]
+    count = 0
+    counts = []
+    for m in messages:
+      strcount = 0
+      for c in m:
+        if c in letters:
+          count += 1
+          strcount += 1
+      counts.append(strcount)
+    return count, counts
