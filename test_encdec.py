@@ -245,7 +245,40 @@ class StreamTestCase(unittest.TestCase):
 
   def tearDown(self):
     self.st = None
-    
+
+class HomophonicTestCase(unittest.TestCase):
+  """
+  Test homophonic to make sure it uses different
+  alphabets correctly.
+  """
+  def setUp(self):
+    self.hp = encdec.Homophonic()
+    self.hp.set_key(self.hp.generate_key(None))
+
+  def test_no_repeat_one_message(self):
+    """
+    Test to make sure that homophonic does what it is supposed to do
+    (that is, map a key to a different value each time)
+    """
+    test_string = "aaaaaaaaaaaaaaaaaaaaaaaa"
+    encrypted_string = self.hp.encrypt(test_string)
+    first = encrypted_string[0]
+    for c in encrypted_string:
+      if c != first:
+        return
+    self.fail("homophonic cipher seems to encrypt a letter to the same value every time in a long string")
+
+  def test_no_repeate_multiple_messages(self):
+    """
+    Test to make sure that homophonic does what it is supposed to
+    do when we try to encrypt the same value over multiple encryption
+    calls.
+    """
+    output = self.hp.encrypt("a")
+    for i in range(200):
+      if self.hp.encrypt("a") != output:
+        return
+    self.fail("homophonic cipher seems to encrypt a letter to the same value when encrypt is called over and over again")
 
 if __name__ == "__main__":
   unittest.main()
