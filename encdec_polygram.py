@@ -24,9 +24,12 @@ class Polygram(EncryptorDecryptor):
     self.key['length'] = 0
     self.key['blocks'] = {}
     self.key['packing'] = True
+    self.key['iv'] = 0
     self.inv_blocks = {}
     self.packer = Packer()
     self.block_mask = 0
+    self.e_vector = 0
+    self.d_vector = 0
 
   def set_key(self, key):
     """
@@ -38,6 +41,8 @@ class Polygram(EncryptorDecryptor):
     self.inv_blocks = {}
     self.__build_inv_blocks()
     self.__build_block_mask()
+    self.e_vector = self.key['iv']
+    self.d_vector = self.key['iv']
 
   def __build_inv_blocks(self):
     for k, v in self.key['blocks'].iteritems():
@@ -59,14 +64,17 @@ class Polygram(EncryptorDecryptor):
     shift = 0
     while shift < length:
       plain_block = (l >> shift) & self.block_mask
-      cipher_block = self.key['blocks'][plain_block]
+      cipher_block = self.__encrypt_block(plain_block)
       output |= (cipher_block << shift)
       shift += self.key['length']
 
     return util.long_to_byte_string(output, length)
 
-  def __encrypt_block(self):
-    pass
+  def __encrypt_block(self, block):
+    block = (block ^ self.e_vector) & self.block_mask
+    out = self.key['blocks'][block]
+    self.e_vector = out
+    return out
 
   def decrypt(self, ciphertext):
     l, length = util.byte_string_to_long(ciphertext)
@@ -74,7 +82,7 @@ class Polygram(EncryptorDecryptor):
     shift = 0
     while shift < length:
       cipher_block = (l >> shift) & self.block_mask
-      plain_block = self.inv_blocks[cipher_block]
+      plain_block = self.__decrypt_block(cipher_block)
       output |= (plain_block << shift)
       shift += self.key['length']
 
@@ -84,6 +92,13 @@ class Polygram(EncryptorDecryptor):
     else:
       unpacked_value = byte_string
     return unpacked_value
+
+  def __decrypt_block(self, block):
+    through_block_dict = self.inv_blocks[block]
+    out = (through_block_dict ^ self.d_vector) & self.block_mask
+    self.d_vector = block
+    return out
+
 
   def generate_key(self, args):
     """
@@ -113,6 +128,11 @@ class Polygram(EncryptorDecryptor):
     # Now randomly grab them
     for i in range(2**key['length']):
       key['blocks'][i] = symbols.pop()
+
+    # Now randomly generate an
+    # initialization vector
+
+    key['iv'] = random.randint(0, 2**args)
 
     return key
 
