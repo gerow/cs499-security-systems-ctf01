@@ -224,6 +224,20 @@ class PolygramTestCase(unittest.TestCase):
     self.p.disable_packing()
     self.assert_different_block_sizes("abcdefghijklmnopqrstuvwxyz.,!? " * 3)
 
+  def test_non_repeating(self):
+    """
+    Make sure that the CBC system works
+    """
+    self.p.set_key(self.p.generate_key(None))
+    plaintext = "hello"
+    ciphertext = self.p.encrypt(plaintext)
+    for i in range(20):
+      if ciphertext != self.p.encrypt(plaintext):
+        return
+
+    self.fail("polygram cipher does not correctly use CBC")
+
+
 class LFSRTestCase(unittest.TestCase):
   """
   Test the lfsr (mainly just check for syntax errors)

@@ -65,6 +65,9 @@ class Polygram(EncryptorDecryptor):
 
     return util.long_to_byte_string(output, length)
 
+  def __encrypt_block(self):
+    pass
+
   def decrypt(self, ciphertext):
     l, length = util.byte_string_to_long(ciphertext)
     output = 0L
