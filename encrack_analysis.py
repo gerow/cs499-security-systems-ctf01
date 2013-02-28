@@ -13,6 +13,10 @@ class Analysis:
       self.letter_frequency = pickle.load(f)
 
     self.__build_ordered_letters()
+    self.most_common_words = []
+    with open("etc/5000.txt", "r") as f:
+      for l in f:
+        self.most_common_words.insert(0, l)
 
   def __build_ordered_letters(self):
     s = sorted(self.letter_frequency.items(), key=lambda x: x[1])
@@ -46,6 +50,28 @@ class Analysis:
     sorted_out = sorted(out.items(), key=lambda x: x[1])
     sorted_out.reverse()
     return sorted_out
+
+  def __remove_punctuation_cleverly(self, word):
+    if word[-1] in [",", ".", "?", "!"]:
+      return word[:-1]
+    return word
+
+  def is_most_common_word(self, word):
+    word = self.__remove_punctuation_cleverly(word)
+    return word in self.most_common_words
+
+  def common_word_score(self, word):
+    if not self.is_most_common_word(word):
+      return 0.0
+    return 1.0 - self.most_common_words.index(word)/5000.0
+
+  def common_words_score(self, messages):
+    score = 0.0
+    for m in messages:
+      for word in m.split():
+        score += self.common_word_score(word)
+
+    return score
 
   def detect_odd_space(self, messages):
     """
@@ -84,6 +110,19 @@ class Analysis:
       if message_problem:
         return problems
     return []
+
+  #def detect_odd_punctuation(self, messages):
+  #  for m in messages:
+  #    for i, c in enumerate(messages):
+  #      try:
+  #        if c == "." && (messages[i + 1] != " " || i == 0):
+  #          return True
+  #        if c == "," && (messages[i + 1] != " " || i == 0 || i == len(messages) - 1):
+  #          return True
+  #        if c == 
+  #      except IndexError:
+  #        pass
+
 
   def fraction_chars_in_dict(self, messages):
     """

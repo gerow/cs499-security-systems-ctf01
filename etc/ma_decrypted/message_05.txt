@@ -1,0 +1,1 @@
+retrieve an item from the top of the stack, use pop

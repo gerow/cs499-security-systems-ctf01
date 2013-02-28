@@ -45,7 +45,9 @@ class Dictcheck(object):
     is stripped
     """
     # Check if len is 0 (so we don't overflow on accident)
-    string = util.strip_punctuation(string)
+    # string = util.strip_punctuation(string)
+    if string[-1] in [".", ",", "!", "?"]:
+      string = string[:-1]
     if len(string) == 0:
       return 0.0
     words = string.split()
