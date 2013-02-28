@@ -149,3 +149,7 @@ class Polygram(EncryptorDecryptor):
   
   def enable_packing(self):
     self.key['packing'] = True
+
+if __name__ == "__main__":
+  m = Polygram()
+  m.run_from_command_line()

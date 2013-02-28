@@ -107,3 +107,7 @@ class Polyalphabetic(EncryptorDecryptor):
   def load_key(self, filename):
     with open(filename, "r") as f:
       self.set_key(pickle.load(f))
+
+if __name__ == "__main__":
+  m = Polyalphabetic()
+  m.run_from_command_line()

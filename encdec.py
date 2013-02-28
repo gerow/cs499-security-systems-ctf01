@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import sys
+
 class EncryptorDecryptor(object):
   """
   A simple interface that encryption classes should support
@@ -48,6 +50,41 @@ class EncryptorDecryptor(object):
     filename given and start using it as this instance's key.
     """
     raise NotImplementedError("An EncryptorDecryptor must implement this")
+
+  def encrypt_stdin_to_stdout(self):
+    """
+    Just use this encryption method to encrypt lines from stdin
+    and print them to stdout
+    """
+    for l in sys.stdin:
+      l = l.strip()
+      print self.encrypt(l)
+
+  def decrypt_stdin_to_stdout(self):
+    """
+    Decrypt the values on stdin and print them to stdout
+    """
+    for l in sys.stdin:
+      l = l.strip()
+      print self.decrypt(l)
+
+  def run_from_command_line(self):
+    """
+    Run this using arguments from the command line.  The args are
+    as follows:
+    arg1 is either e or d and determines whether we are encrypting
+    or decrypting
+    arg2 is the filename for the key we want to load
+    """
+    if len(sys.argv) != 3:
+      print "usage: " + sys.argv[0] + " e/d key_file.key"
+    self.load_key(sys.argv[2])
+    if sys.argv[1] == "e":
+      self.encrypt_stdin_to_stdout()
+    elif sys.argv[1] == "d":
+      self.decrypt_stdin_to_stdout()
+    else:
+      print "invalid action (must use e to encrypt or d to decrypt)"
 
 # Import monoalphabetic to be a part of this package
 from encdec_monoalphabetic import Monoalphabetic

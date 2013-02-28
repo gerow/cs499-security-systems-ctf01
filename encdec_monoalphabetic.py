@@ -83,3 +83,7 @@ class Monoalphabetic(EncryptorDecryptor):
     with open(filename, "r") as f:
       self.__key = pickle.load(f)
     self.__generate_inv_key()
+
+if __name__ == "__main__":
+  m = Monoalphabetic()
+  m.run_from_command_line()
