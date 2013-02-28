@@ -42,6 +42,8 @@ class EncryptionCracker(object):
       # Sort the list by mtime (using lambda!)
       files_to_add.sort(key=lambda tup: tup[1])
       for filestr in files_to_add:
+        if filestr[0][-1] == "\n":
+          filestr[0] = filestr[0][:-1]
         self.messages.append(filestr[0])
       return files_to_add
     except OSError, IOError:

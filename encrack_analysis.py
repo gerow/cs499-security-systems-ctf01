@@ -4,6 +4,8 @@ import encrack
 import pickle
 import os
 
+import util
+
 class Analysis:
   def __init__(self):
     self.d = encrack.Dictcheck()
@@ -28,6 +30,8 @@ class Analysis:
     the total message that it is a part of
     """
     out = {}
+    for l in util.SYMBOLS:
+      out[l] = 0
     for message in messages:
       for c in message:
         try:
@@ -39,7 +43,9 @@ class Analysis:
       total_len += len(message)
     for k,v in out.iteritems():
       out[k] = float(v)/float(total_len)
-    return out
+    sorted_out = sorted(out.items(), key=lambda x: x[1])
+    sorted_out.reverse()
+    return sorted_out
 
   def detect_odd_space(self, messages):
     """
