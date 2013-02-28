@@ -1,10 +1,24 @@
 #!/usr/bin/python
 
 import encrack
+import pickle
+import os
 
 class Analysis:
   def __init__(self):
     self.d = encrack.Dictcheck()
+    with open(os.path.join("etc", "analysis_results", "letter_frequency.analysis"), "r") as f:
+      self.letter_frequency = pickle.load(f)
+
+    self.__build_ordered_letters()
+
+  def __build_ordered_letters(self):
+    s = sorted(self.letter_frequency.items(), key=lambda x: x[1])
+    output = []
+    s.reverse()
+    for k, v in s:
+      output.append(k)
+    self.ordered_letters = tuple(output)
 
   def frequency_report(self, messages):
     """
