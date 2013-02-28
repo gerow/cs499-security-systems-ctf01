@@ -72,11 +72,11 @@ class Monoalphabetic(EncryptionCracker):
 
   def score(self):
     chars_in_dict = self.a.fraction_chars_in_dict(self.decrypt())
-    common_word_score = self.a.common_words_score(self.decrypt())
-    return chars_in_dict + common_word_score
+    #common_word_score = self.a.common_words_score(self.decrypt())
+    return chars_in_dict
 
   def acceptance_probability(self, score, new_score, temp):
-    if new_score > score:
+    if new_score >= score:
       return 1.0
     return temp
 
@@ -98,7 +98,7 @@ class Monoalphabetic(EncryptionCracker):
 
     # We assume that the most common character is space...
     # Might want to try something else too...
-    kmax = 1000000
+    kmax = 10000000
     k = 0
     best_key = copy.copy(self.key)
     best_score = self.score()

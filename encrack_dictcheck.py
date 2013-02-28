@@ -26,9 +26,7 @@ class Dictcheck(object):
   def word_in_dict(self, word):
     """
     Check to see if the given word is in the dict.
-    If it is, return true, otherwise return false.
-
-    Note that word with upper case characters or
+    If it is, return true, otherwise return false.  Note that word with upper case characters or
     punctuation will always fail.
     """
     return word in self.words_set
@@ -59,3 +57,18 @@ class Dictcheck(object):
         good_chars += len(word)
 
     return float(good_chars) / float(total_chars)
+
+  def get_partial_word_matches(self, string):
+    out = []
+    for word in self.words_set:
+      if len(word) == len(string):
+        match_count = 0
+        for i in range(len(word)):
+          if word[i] == string[i]:
+            match_count += 1
+
+        out.append({ "word":word, "count":match_count})
+
+    out.sort(key=lambda entry: entry["count"])
+    out.reverse()
+    return out
