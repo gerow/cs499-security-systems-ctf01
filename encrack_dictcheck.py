@@ -61,6 +61,7 @@ class Dictcheck(object):
   def get_partial_word_matches(self, string):
     out = []
     for word in self.words_set:
+      word = util.strip_invalid_symbols(word)
       if len(word) == len(string):
         match_count = 0
         for i in range(len(word)):

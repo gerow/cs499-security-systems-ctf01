@@ -69,6 +69,7 @@ class Monoalphabetic(EncryptionCracker):
     """
     Linear temperature decreasing
     """
+    #return -p**2 + 1
     return 1 - p
 
   def score(self):
@@ -108,18 +109,25 @@ class Monoalphabetic(EncryptionCracker):
           print "Suggested partials " + str(partials)
           best_score = 0
           best_key = self.key
+          common_word_score = 0.0
           for p in partials:
             self.push_key()
             for k, c in enumerate(p["word"]):
-              print "ciphertext " + self.messages[m_i][w_i][k]
-              print "suggested character " + c
+              cipher_letter = self.messages[m_i][self.get_char_index(m_i, w_i, k)]
+              #print "ciphertext " + cipher_letter
+              #print "suggested character " + c
               c = c.lower()
-              self.set(self.messages[m_i][w_i][k], c)
+              self.set(cipher_letter, c)
             score = self.score()
-            if score < best_score:
+            if score > best_score:
               print "New best score " + str(self.decrypt())
               best_score = score
               best_key = self.key
+            elif score == best_score:
+              new_common_word_score = self.a.common_word_score(p["word"])
+              if new_common_word_score > common_word_score:
+                common_word_score = new_common_word_score
+                best_key = self.key
             self.pop_key()
           self.key = best_key
           decrypted = self.decrypt()
@@ -128,6 +136,14 @@ class Monoalphabetic(EncryptionCracker):
     print str(self.decrypt())
 
 
+  def get_char_index(self, m_i, w_i, c_i):
+    ccount = 0
+    decrypted = self.decrypt()
+    for i, word in enumerate(decrypted[m_i].split()):
+      if i == w_i:
+        return ccount + c_i
+      else:
+        ccount += len(word) + 1
 
 
   def simulated_annealing_crack(self):
@@ -148,7 +164,7 @@ class Monoalphabetic(EncryptionCracker):
 
     # We assume that the most common character is space...
     # Might want to try something else too...
-    kmax = 1000000
+    kmax = 10000000
     k = 0
     best_key = copy.copy(self.key)
     best_score = self.score()
