@@ -90,6 +90,8 @@ class Monoalphabetic(EncryptionCracker):
   def partial_word_match_crack(self):
     """
     Try to crack using a partial word match approach
+    It's kinda a mess... but it was written at 3am during
+    a flash of inspiration
     """
     self.load_new_messages()
     print "MESSAGES: " + str(self.messages)
@@ -99,19 +101,23 @@ class Monoalphabetic(EncryptionCracker):
 
     # Cycle over the list 1000 times
     decrypted = self.decrypt()
-    for i in range(1000):
+    for i in range(1):
       for m_i in range(len(decrypted)):
         split_words = decrypted[m_i].split()
         for w_i in range(len(split_words)):
           word = self.remove_normal_punc(split_words[w_i])
+          if self.d.word_in_dict(word):
+            continue
           partials = self.d.get_partial_word_matches(word)
-          print "With word " + word
-          print "Suggested partials " + str(partials)
-          best_score = 0
+          #print "With word " + word
+          #print "Suggested partials " + str(partials)
+          best_score = self.score()
           best_key = self.key
           common_word_score = 0.0
           for p in partials:
             self.push_key()
+            if p["count"] == 0:
+              break
             for k, c in enumerate(p["word"]):
               cipher_letter = self.messages[m_i][self.get_char_index(m_i, w_i, k)]
               #print "ciphertext " + cipher_letter
@@ -120,7 +126,10 @@ class Monoalphabetic(EncryptionCracker):
               self.set(cipher_letter, c)
             score = self.score()
             if score > best_score:
-              print "New best score " + str(self.decrypt())
+              print "New best scoring is " + str(self.decrypt())
+              print "It has a score of " + str(self.score())
+              if self.score() == 1.0:
+                return
               best_score = score
               best_key = self.key
             elif score == best_score:
@@ -196,7 +205,7 @@ class Monoalphabetic(EncryptionCracker):
 
   def crack(self):
     self.partial_word_match_crack()
-    self.simulated_annealing_crack()
+    #self.simulated_annealing_crack()
 
 if __name__ == "__main__":
   directory = sys.argv[1]
