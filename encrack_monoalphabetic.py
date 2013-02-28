@@ -15,6 +15,7 @@ class Monoalphabetic(EncryptionCracker):
     super(Monoalphabetic, self).__init__(directory)
     self.a = Analysis()
     self.e = encdec.Monoalphabetic()
+    self.d = Dictcheck()
     self.key = {}
     self.frozen_symbol = {}
     self.__init_key()
@@ -80,6 +81,55 @@ class Monoalphabetic(EncryptionCracker):
       return 1.0
     return temp
 
+  def remove_normal_punc(self, word):
+    if word[-1] in (".", ",", "!", "?"):
+      return word[:-1]
+    return word
+
+  def partial_word_match_crack(self):
+    """
+    Try to crack using a partial word match approach
+    """
+    self.load_new_messages()
+    print "MESSAGES: " + str(self.messages)
+    # Set the values by frequency first just as a
+    # good starting point
+    self.set_key_to_freq()
+
+    # Cycle over the list 1000 times
+    decrypted = self.decrypt()
+    for i in range(1000):
+      for m_i in range(len(decrypted)):
+        split_words = decrypted[m_i].split()
+        for w_i in range(len(split_words)):
+          word = self.remove_normal_punc(split_words[w_i])
+          partials = self.d.get_partial_word_matches(word)
+          print "With word " + word
+          print "Suggested partials " + str(partials)
+          best_score = 0
+          best_key = self.key
+          for p in partials:
+            self.push_key()
+            for k, c in enumerate(p["word"]):
+              print "ciphertext " + self.messages[m_i][w_i][k]
+              print "suggested character " + c
+              c = c.lower()
+              self.set(self.messages[m_i][w_i][k], c)
+            score = self.score()
+            if score < best_score:
+              print "New best score " + str(self.decrypt())
+              best_score = score
+              best_key = self.key
+            self.pop_key()
+          self.key = best_key
+          decrypted = self.decrypt()
+          split_words = decrypted[m_i].split()
+
+    print str(self.decrypt())
+
+
+
+
   def simulated_annealing_crack(self):
     """
     Try to crack using a simulated annealing based
@@ -98,7 +148,7 @@ class Monoalphabetic(EncryptionCracker):
 
     # We assume that the most common character is space...
     # Might want to try something else too...
-    kmax = 10000000
+    kmax = 1000000
     k = 0
     best_key = copy.copy(self.key)
     best_score = self.score()
@@ -129,6 +179,7 @@ class Monoalphabetic(EncryptionCracker):
     print "Using key " + str(self.key)
 
   def crack(self):
+    self.partial_word_match_crack()
     self.simulated_annealing_crack()
 
 if __name__ == "__main__":
