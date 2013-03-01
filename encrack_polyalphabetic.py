@@ -11,7 +11,7 @@ import util
 from encrack import *
 
 class Polyalphabetic(EncryptionCracker):
-  def __init__(self, directory, length):
+  def __init__(self, directory, length, method):
     super(Polyalphabetic, self).__init__(directory)
     self.a = Analysis()
     self.e = encdec.Polyalphabetic()
@@ -20,6 +20,10 @@ class Polyalphabetic(EncryptionCracker):
     self.key = []
     self.key_length = length
     self.key_stack = []
+
+    self.method = method
+
+    self.wordi_cache = {}
 
     self.__init_key()
 
@@ -92,6 +96,77 @@ class Polyalphabetic(EncryptionCracker):
     alphabet = random.randint(0, self.key_length - 1)
     self.set(cipher_pick, plain_pick, alphabet)
 
+  def partial_word_match_crack(self):
+    self.load_new_messages()
+    print "MESSAGES: " + str(self.messages)
+    self.set_key_to_freq()
+    print "initial decryption: " + str(self.decrypt())
+
+    decrypted = self.decrypt()
+    for i in range(20):
+      for m_i in range(len(decrypted)):
+        split_words = decrypted[m_i].split()
+        c_i = 0
+        for w_i in range(len(split_words)):
+          print "Split words is " + str(split_words)
+          print "w_i is " + str(w_i)
+          try:
+            word = self.remove_normal_punc(split_words[w_i])
+          except IndexError:
+            break
+          if self.d.word_in_dict(word):
+            continue
+          partials = self.d.get_partial_word_matches(word)
+          best_score = self.score()
+          best_key = self.key
+          common_word_score = 0.0
+          for p in partials:
+            self.push_key()
+            if p["count"] == 0:
+              break
+            for k, c in enumerate(p["word"]):
+              cipher_letter = self.messages[m_i][self.get_char_index(m_i, w_i, k)]
+              self.set_i_to_char(m_i, c_i + k, c)
+            score = self.score()
+            if score > best_score:
+              print "New best scoring is " + str(self.decrypt())
+              print "It has a score of " + str(self.score())
+              c = c.lower()
+              if self.score() == 1.0:
+                return
+              best_score = score
+              best_key = self.key
+            elif score == best_score:
+              new_common_word_score = self.a.common_word_score(p["word"])
+              if new_common_word_score > common_word_score:
+                common_word_score = new_common_word_score
+                best_key = self.key
+              self.pop_key()
+            self.key = best_key
+            decrypted = self.decrypt()
+            split_words = decrypted[m_i].split()
+        try:
+          c_i += len(split_words[w_i]) + 1
+        except IndexError:
+          break
+
+  def get_char_index(self, m_i, w_i, c_i):
+    if (m_i, w_i) in self.wordi_cache:
+      return self.wordi_cache[(m_i, w_i)] + c_i
+    ccount = 0
+    decrypted = self.decrypt()
+    for i, word in enumerate(decrypted[m_i].split()):
+      if i == w_i:
+        self.wordi_cache[(m_i, w_i)] = ccount
+        return ccount + c_i
+      else:
+        ccount += len(word) + 1
+
+  def remove_normal_punc(self, word):
+    if word[-1] in (".", ",", "!", "?"):
+      return word[:-1]
+    return word
+
   def simulated_annealing_crack(self):
     self.load_new_messages()
     print "MESSAGES: " + str(self.messages)
@@ -104,7 +179,7 @@ class Polyalphabetic(EncryptionCracker):
     best_score = self.score()
     s = best_score
 
-    while k < kmax:
+    while k < kmax or s < 0.9:
       t = self.temp(float(k)/kmax)
       self.push_key()
       self.random_set_key()
@@ -129,8 +204,12 @@ class Polyalphabetic(EncryptionCracker):
     print "Using key" + str(self.key)
 
   def crack(self):
-    self.simulated_annealing_crack()
-    #self.partial_word_match_crack()
+    if self.method == "sa":
+      self.simulated_annealing_crack()
+    elif self.method == "pm":
+      self.partial_word_match_crack()
+    else:
+      print "Invalid method type"
 
   def get_split_messages(self):
     out = []
@@ -149,5 +228,6 @@ class Polyalphabetic(EncryptionCracker):
 if __name__ == "__main__":
   directory = sys.argv[1]
   length = int(sys.argv[2])
-  p = Polyalphabetic(directory, length)
+  method = sys.argv[3]
+  p = Polyalphabetic(directory, length, method)
   p.crack()
