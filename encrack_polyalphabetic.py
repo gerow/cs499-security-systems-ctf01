@@ -91,8 +91,8 @@ class Polyalphabetic(EncryptionCracker):
   def get_alphabet_number(self, m_i, w_i, c_i):
     ccount = 0
     decrypted = self.decrypt()
-    for i, m in decrypted:
-      if i != mi_wi:
+    for i, m in enumerate(decrypted):
+      if i != m_i:
         ccount += len(m)
       else:
         break
@@ -123,9 +123,10 @@ class Polyalphabetic(EncryptionCracker):
     for sp in space_freqs:
       self.set_key_to_freq()
       self.set_spaces(sp)
-      self.set_key_to_freq()
-      self.set_spaces(("p", "z", "d", "t", "m"))
-      if self.crack_with_space_setting(("p", "z", "d", "t", "m")):
+      if self.a.detect_odd_space(self.decrypt()):
+        print "odd spaces detected in message.  Skipping space candidate."
+        continue
+      if self.crack_with_space_setting(sp):
         print "DONE!"
         return
 
@@ -214,7 +215,6 @@ class Polyalphabetic(EncryptionCracker):
               plain_letter = c
               alphabet_number = self.get_alphabet_number(m_i, w_i, k)
               self.set(cipher_letter, plain_letter, alphabet_number)
-              self.set_i_to_char(m_i, c_i + k, c)
             score = self.score()
             if score > best_score:
               print "New best scoring is " + str(self.decrypt())
