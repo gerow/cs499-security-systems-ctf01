@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import copy
+import sys
 
 import encdec
 import collections
@@ -49,3 +50,23 @@ class Polyalphabetic(EncryptionCracker):
 
   def crack(slef):
     self.partial_word_match_crack()
+
+  def get_split_messaes(self):
+    out = []
+    for count in range(self.key_length):
+      i = 0
+      mstring = ""
+      for m in self.messages:
+        for c in m:
+          if i % count == 0:
+            mstring += c
+          i += 1
+      out.append(mstring)
+
+    return out
+
+if __name__ == "__main__":
+  directory = sys.argv[1]
+  length = int(sys.argv[2])
+  p = Polyalphabetic(directory, length)
+  p.crack()
