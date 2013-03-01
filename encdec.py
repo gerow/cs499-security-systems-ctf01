@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import os
 
 class EncryptorDecryptor(object):
   """
@@ -68,6 +69,15 @@ class EncryptorDecryptor(object):
       l = l.strip()
       print self.decrypt(l)
 
+  def run_from_command_line_to_dir(self, from_dir, to_dir):
+    dirs = os.listdir(from_dir)
+    dirs.sort()
+    for fn in dirs:
+      print "Encrypting " + fn
+      with open(os.path.join(from_dir, fn), "r") as r:
+        with open(os.path.join(to_dir, fn), "w") as w:
+          w.write(self.encrypt(r.read().strip("\n")))
+
   def run_from_command_line(self):
     """
     Run this using arguments from the command line.  The args are
@@ -76,11 +86,11 @@ class EncryptorDecryptor(object):
     or decrypting
     arg2 is the filename for the key we want to load
     """
-    if len(sys.argv) != 3:
-      print "usage: " + sys.argv[0] + " e/d key_file.key"
     self.load_key(sys.argv[2])
     if sys.argv[1] == "e":
       self.encrypt_stdin_to_stdout()
+    elif sys.argv[1] == "dir":
+      self.run_from_command_line_to_dir(sys.argv[3], sys.argv[4])
     elif sys.argv[1] == "d":
       self.decrypt_stdin_to_stdout()
     else:

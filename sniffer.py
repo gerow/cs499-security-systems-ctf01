@@ -2,9 +2,12 @@
 import nfqueue
 import cracker
 import thread
-#from scapy.all import IP, TCP
+#from scapy.all import IP, TCP,
 import socket
-from dpkt import ip, tcp, hexdump
+import time
+from dpkt import ip, tcp, hexdump, udp
+
+
 """ Module that will lift messages off the network
 for decryption
 """
@@ -19,24 +22,31 @@ def crack():
 	while 1:
 		pass
 """
+
+count = 0
 def crack(dummy, payload):
+	global count
 	print "Got packet"
-	print payload
 	data = payload.get_data()
 	packet = ip.IP(data)
-	print packet.tcp.data
+	#print packet.tcp.data
 	#print payload[TCP]
+	print packet.p == ip.IP_PROTO_TCP
+	mData = ""
+	if packet.p == ip.IP_PROTO_TCP:
+		mData = packet.tcp.data
+	elif packet.p == ip.IP_PROTO_UDP:
+		mData = packet.udp.data
+	
+	if len(mData) != 0:
+		outFileName = str(packet.tcp.dport) + "_id" + str(count)
+		fout = open(outFileName, 'wb')
+		print mData
+		fout.write(mData)
+		fout.close()
+		count = count + 1
 	payload.set_verdict(nfqueue.NF_ACCEPT)
-	"""
-	try:
-		thread.start_new_thread(cracker.monoAlphabeticCrack, ())
-		thread.start_new_thread(cracker.polyAlphabeticCrack, ())
-		thread.start_new_thread(cracker.polygramCrack, ())
-		thread.start_new_thread(cracker.homophoneCrack, ())
-		thread.start_new_thread(cracker.streamCrack, ())
-	except:
-		print "Problem with threading in sniffer.crack()
-	"""
+	
 
 if __name__ == "__main__":
 	q = None
