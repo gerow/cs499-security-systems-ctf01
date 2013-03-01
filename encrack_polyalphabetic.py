@@ -3,6 +3,7 @@
 import copy
 import sys
 import collections
+import random
 
 import encdec
 import util
@@ -49,7 +50,7 @@ class Polyalphabetic(EncryptionCracker):
   def set(self, cipher, plain, alphabet):
     for k, v in self.key[alphabet].iteritems():
       if v == cipher:
-        self.key[alphabet][k] = self.key[plain]
+        self.key[alphabet][k] = self.key[alphabet][plain]
     self.key[alphabet][plain] = cipher
 
   def decrypt(self):
@@ -71,14 +72,65 @@ class Polyalphabetic(EncryptionCracker):
     chars_in_dict = self.a.fraction_chars_in_dict(self.decrypt())
     return chars_in_dict
 
-  def partial_word_match_crack(self):
+  def temp(self, p):
+    """
+    Linear temperature decreasing
+    """
+    #return -p**2 + 1
+    return 1 - p
+
+  def acceptance_probability(self, score, new_score, temp):
+    if new_score >= score:
+      return 1.0
+    return temp
+
+  def random_set_key(self):
+    plain_set = copy.copy(list(util.SYMBOLS))
+
+    plain_pick = random.choice(util.SYMBOLS)
+    cipher_pick = random.choice(util.SYMBOLS)
+    alphabet = random.randint(0, self.key_length - 1)
+    self.set(cipher_pick, plain_pick, alphabet)
+
+  def simulated_annealing_crack(self):
     self.load_new_messages()
     print "MESSAGES: " + str(self.messages)
     self.set_key_to_freq()
-    print "MESSAGES " + str(self.decrypt())
+    print "initial decryption: " + str(self.decrypt())
+
+    kmax = 10000000
+    k = 0
+    best_key = copy.copy(self.key)
+    best_score = self.score()
+    s = best_score
+
+    while k < kmax:
+      t = self.temp(float(k)/kmax)
+      self.push_key()
+      self.random_set_key()
+      snew = self.score()
+      if self.acceptance_probability(s, snew, t) > random.random():
+        s = snew
+        self.clear_key_stack()
+      else:
+        self.pop_key()
+      if s > best_score:
+        best_score = s
+        best_key = copy.copy(self.key)
+        print "New best key gives us " + str(self.decrypt())
+        print "It has a score of " + str(self.score())
+      if k % 10000 == 0:
+        print "On iteration " + str(k)
+        self.load_new_messages()
+      k += 1
+
+    self.key = best_key
+    print "Best scoring decryption is " + str(self.decrypt())
+    print "Using key" + str(self.key)
 
   def crack(self):
-    self.partial_word_match_crack()
+    self.simulated_annealing_crack()
+    #self.partial_word_match_crack()
 
   def get_split_messages(self):
     out = []
