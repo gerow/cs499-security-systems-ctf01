@@ -46,6 +46,8 @@ class Analysis:
     total_len = 0
     for message in messages:
       total_len += len(message)
+    if total_len == 0:
+      return out
     for k,v in out.iteritems():
       out[k] = float(v)/float(total_len)
     sorted_out = sorted(out.items(), key=lambda x: x[1])
