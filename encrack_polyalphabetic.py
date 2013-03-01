@@ -4,6 +4,7 @@ import copy
 import sys
 import collections
 import random
+import math
 
 import encdec
 import util
@@ -26,6 +27,7 @@ class Polyalphabetic(EncryptionCracker):
     self.wordi_cache = {}
 
     self.__init_key()
+    self.AVG_WORD_LENGTH = 5.2
 
   def __init_key(self):
     for i in range(self.key_length):
@@ -68,8 +70,6 @@ class Polyalphabetic(EncryptionCracker):
       freport = self.a.frequency_report([split_messages[i]])
       print str(freport)
       for j, letter in enumerate(self.a.ordered_letters):
-        print "i is " + str(i)
-        print "j is " + str(j)
         self.key[i][letter] = freport[j][0]
 
   def score(self):
@@ -97,7 +97,54 @@ class Polyalphabetic(EncryptionCracker):
     self.set(cipher_pick, plain_pick, alphabet)
 
   def partial_word_match_crack(self):
+    print "SPLIT MESSAGES: " + str(self.get_split_messages())
+    self.load_new_messages()
+    print "MESSAGES: " + str(self.messages)
+    self.set_key_to_freq()
+    print "initial decryption: " + str(self.decrypt())
+    print "generating likely candidates for space character..."
+    space_freqs = self.gen_space_freqs(16)
+    print "ranking candidate space characters..."
+    space_freqs = self.order_space_freqs(space_freqs)
+    for sp in space_freqs:
+      self.set_spaces(sp)
+      if self.crack_with_space_setting():
+        print "DONE!"
+        return
 
+  def order_space_freqs(self, sp):
+    results = collections.deque()
+    for i, s in enumerate(sp):
+      if i % 20000 == 0:
+        print "calculating deviation for iteration " + str(i) + " of " + str(len(sp)) + " (" + str(float(i)/len(sp) * 100) + "%)"
+      self.set_spaces(s)
+      results.append([s, math.fabs(self.AVG_WORD_LENGTH -  self.avg_word_length())])
+    results = list(results)
+    print "sorting list (this could take a while)"
+    results.sort(key=lambda entry: entry[1])
+    return [entry[0] for entry in results]
+
+
+  def avg_word_length(self):
+    decrypted = self.decrypt()
+    lengths = collections.deque()
+    for m in decrypted:
+      for w in m.split():
+        w = self.remove_normal_punc(w)
+        lengths.append(len(w))
+    return float(sum(lengths))/len(lengths)
+
+  def set_spaces(self, sp):
+    for i, v in enumerate(sp):
+      self.set(v, " ", i)
+
+  def set(self, cipher, plain, alphabet):
+    for k, v in self.key[alphabet].iteritems():
+      if v == cipher:
+        self.key[alphabet][k] = self.key[alphabet][plain]
+    self.key[alphabet][plain] = cipher
+
+  def crack_with_space_setting(self):
     decrypted = self.decrypt()
     for i in range(14):
       print "NOW ON ITERATION " + str(i)
@@ -208,49 +255,25 @@ class Polyalphabetic(EncryptionCracker):
     freq_reports = []
     split_messages = self.get_split_messages()
     curr_number = []
-    out = []
+    out = collections.deque()
     for m in split_messages:
       freq_reports.append(self.a.frequency_report([m]))
-      out.append([])
-    for i in range(len(split_messages)):
-      curr_number.append(0)
 
-    out_i = 0
-    while curr_number:
-      out.append([])
-      for i, n in enumerate(curr_number):
-        out[out_i].append(freq_reports[i][n][0])
-      out_i += 1 
-      curr_number = self.__inc_curr_number(curr_number, num_per)
-      print "curr number: " + str(curr_number)
+    for i in range(num_per**len(freq_reports)):
+      if i % 20000 == 0:
+        print "generating iteration " + str(i) + " of " + str(num_per**len(freq_reports)) + " (" + str(float(i)/num_per**len(freq_reports) * 100) + "%)"
+      new_one = collections.deque()
+      for j, f in enumerate(freq_reports):
+        new_one.append(freq_reports[j][i / num_per**j % num_per][0])
+      out.append(new_one)
+
     return out
-
-  def __inc_curr_number(self, curr_number, num_per):
-    print "curr number: " + str(curr_number)
-    for i, v in enumerate(curr_number):
-      curr_number[i] += 1
-      if curr_number[i] == num_per - 1:
-        curr_number[i] = 0
-        if i == len(curr_number) - 1:
-          return False 
-        continue
-      return curr_number
 
   def crack(self):
     if self.method == "sa":
       self.simulated_annealing_crack()
     elif self.method == "pm":
-      self.load_new_messages()
-      print "MESSAGES: " + str(self.messages)
-      self.set_key_to_freq()
-      print "initial decryption: " + str(self.decrypt())
-
-      space_freqs = self.gen_space_freqs(2)
-
-      print "space freqs " + str(space_freqs)
-
-      while self.partial_word_match_crack():
-        pass
+      self.partial_word_match_crack()
     else:
       print "Invalid method type"
 
