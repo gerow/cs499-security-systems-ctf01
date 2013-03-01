@@ -100,7 +100,7 @@ class Monoalphabetic(EncryptionCracker):
 
     # Cycle over the list 1000 times
     decrypted = self.decrypt()
-    for i in range(1):
+    for i in range(5):
       for m_i in range(len(decrypted)):
         split_words = decrypted[m_i].split()
         for w_i in range(len(split_words)):

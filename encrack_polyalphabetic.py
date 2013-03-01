@@ -15,7 +15,7 @@ class Polyalphabetic(EncryptionCracker):
     self.d = Dictcheck()
 
     self.key = []
-    self.key_length
+    self.key_length = length
     self.key_stack = []
 
   def __init_key(self):
@@ -43,3 +43,9 @@ class Polyalphabetic(EncryptionCracker):
   def score(self):
     chars_in_dict = self.a.fraction_chars_in_dict(self.decrypt())
     return chars_in_dict
+
+  def partial_word_match_crack(self):
+    pass
+
+  def crack(slef):
+    self.partial_word_match_crack()
