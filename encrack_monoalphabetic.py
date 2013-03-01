@@ -119,6 +119,7 @@ class Monoalphabetic(EncryptionCracker):
               break
             for k, c in enumerate(p["word"]):
               cipher_letter = self.messages[m_i][self.get_char_index(m_i, w_i, k)]
+              alphabet_number = self.get_alphabet_number(m_i, w_i, k)
               #print "ciphertext " + cipher_letter
               #print "suggested character " + c
               c = c.lower()
@@ -143,10 +144,7 @@ class Monoalphabetic(EncryptionCracker):
 
     print str(self.decrypt())
 
-
   def get_char_index(self, m_i, w_i, c_i):
-    if (m_i, w_i) in self.wordi_cache:
-      return self.wordi_cache[(m_i, w_i)] + c_i
     ccount = 0
     decrypted = self.decrypt()
     for i, word in enumerate(decrypted[m_i].split()):
@@ -156,6 +154,19 @@ class Monoalphabetic(EncryptionCracker):
       else:
         ccount += len(word) + 1
 
+  def get_alphabet_number(self, m_i, w_i, c_i):
+    ccount = 0
+    decrypted = self.decrypt()
+    for i, m in decrypted:
+      if i != mi_wi:
+        ccount += len(m)
+      else:
+        break
+    for i, word in enumerate(decrypted[m_i].split()):
+      if i == w_i:
+        return (ccount + c_i) % self.key_length
+      else:
+        ccount += len(word) + 1
 
   def simulated_annealing_crack(self):
     """

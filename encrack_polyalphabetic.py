@@ -88,6 +88,20 @@ class Polyalphabetic(EncryptionCracker):
       return 1.0
     return temp
 
+  def get_alphabet_number(self, m_i, w_i, c_i):
+    ccount = 0
+    decrypted = self.decrypt()
+    for i, m in decrypted:
+      if i != mi_wi:
+        ccount += len(m)
+      else:
+        break
+    for i, word in enumerate(decrypted[m_i].split()):
+      if i == w_i:
+        return (ccount + c_i) % self.key_length
+      else:
+        ccount += len(word) + 1
+
   def random_set_key(self):
     plain_set = copy.copy(list(util.SYMBOLS))
 
@@ -123,6 +137,9 @@ class Polyalphabetic(EncryptionCracker):
               break
             for k, c in enumerate(p["word"]):
               cipher_letter = self.messages[m_i][self.get_char_index(m_i, w_i, k)]
+              plain_letter = c
+              alphabet_number = self.get_alphabet_number(m_i, w_i, k)
+              self.set(cipher_letter, plain_letter, alphabet_number)
               self.set_i_to_char(m_i, c_i + k, c)
             score = self.score()
             if score > best_score:
