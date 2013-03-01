@@ -103,11 +103,12 @@ class Polyalphabetic(EncryptionCracker):
     self.set_key_to_freq()
     print "initial decryption: " + str(self.decrypt())
     print "generating likely candidates for space character..."
-    space_freqs = self.gen_space_freqs(16)
+    space_freqs = self.gen_space_freqs(5)
     print "ranking candidate space characters..."
     space_freqs = self.order_space_freqs(space_freqs)
     for sp in space_freqs:
       self.set_spaces(sp)
+      self.set_spaces(("p", "z", "d", "t", "m"))
       if self.crack_with_space_setting():
         print "DONE!"
         return

@@ -37,10 +37,10 @@ class EncryptionCracker(object):
           path = os.path.join(self.directory, filename)
           with open(path, "r") as f:
             filestring = f.read()
-          mtime = os.path.getmtime(path)
-          files_to_add.append([filestring, mtime])
+          files_to_add.append([filestring, filename])
       # Sort the list by mtime (using lambda!)
       files_to_add.sort(key=lambda tup: tup[1])
+      print "Sorted files to add: " + str(files_to_add)
       for filestr in files_to_add:
         if filestr[0][-1] == "\n":
           filestr[0] = filestr[0][:-1]
