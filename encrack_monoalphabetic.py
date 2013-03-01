@@ -6,6 +6,7 @@ import encdec
 import util
 import copy
 import random
+import collections
 
 from encrack import *
 
@@ -20,6 +21,8 @@ class Monoalphabetic(EncryptionCracker):
     self.frozen_symbol = {}
     self.__init_key()
     self.key_stack = []
+
+    self.wordi_cache= {}
 
   def __init_key(self):
     for s in util.SYMBOLS:
@@ -53,9 +56,8 @@ class Monoalphabetic(EncryptionCracker):
     self.set(cipher_pick, plain_pick)
 
   def decrypt(self):
-    self.e = encdec.Monoalphabetic()
     self.e.set_key(self.key)
-    out = []
+    out = collections.deque()
     for m in self.messages:
       out.append(self.e.decrypt(m))
     return out
@@ -146,10 +148,13 @@ class Monoalphabetic(EncryptionCracker):
 
 
   def get_char_index(self, m_i, w_i, c_i):
+    if (m_i, w_i) in self.wordi_cache:
+      return self.wordi_cache[(m_i, w_i)] + c_i
     ccount = 0
     decrypted = self.decrypt()
     for i, word in enumerate(decrypted[m_i].split()):
       if i == w_i:
+        self.wordi_cache[(m_i, w_i)] = ccount
         return ccount + c_i
       else:
         ccount += len(word) + 1
