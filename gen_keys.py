@@ -23,6 +23,12 @@ def generate_keys():
   e.set_key(e.generate_key(1000))
   e.dump_key("keys/pa.key")
 
+  # Ok... 1000 is kinda big, let's try giving
+  # them a chance by using 5
+  e = encdec.Polyalphabetic()
+  e.set_key(e.generate_key(5))
+  e.dump_key("keys/pa_short.key")
+
   # Ok, now make a stream cipher key
   e = encdec.Stream()
   e.set_key(e.generate_key(None))
