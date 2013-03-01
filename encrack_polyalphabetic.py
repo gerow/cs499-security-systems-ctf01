@@ -97,13 +97,10 @@ class Polyalphabetic(EncryptionCracker):
     self.set(cipher_pick, plain_pick, alphabet)
 
   def partial_word_match_crack(self):
-    self.load_new_messages()
-    print "MESSAGES: " + str(self.messages)
-    self.set_key_to_freq()
-    print "initial decryption: " + str(self.decrypt())
 
     decrypted = self.decrypt()
-    for i in range(20):
+    for i in range(14):
+      print "NOW ON ITERATION " + str(i)
       for m_i in range(len(decrypted)):
         split_words = decrypted[m_i].split()
         c_i = 0
@@ -133,7 +130,8 @@ class Polyalphabetic(EncryptionCracker):
               print "It has a score of " + str(self.score())
               c = c.lower()
               if self.score() == 1.0:
-                return
+                print "Good score!"
+                return True
               best_score = score
               best_key = self.key
             elif score == best_score:
@@ -149,6 +147,9 @@ class Polyalphabetic(EncryptionCracker):
           c_i += len(split_words[w_i]) + 1
         except IndexError:
           break
+      if self.score() < 0.20:
+        print "Unlikely space candidate"
+        return
 
   def get_char_index(self, m_i, w_i, c_i):
     if (m_i, w_i) in self.wordi_cache:
@@ -203,11 +204,50 @@ class Polyalphabetic(EncryptionCracker):
     print "Best scoring decryption is " + str(self.decrypt())
     print "Using key" + str(self.key)
 
+  def gen_space_freqs(self, num_per):
+    freq_reports = []
+    split_messages = self.get_split_messages()
+    curr_number = []
+    out = []
+    for m in split_messages:
+      freq_reports.append(self.a.frequency_report([m]))
+      out.append([])
+    for i in range(len(split_messages)):
+      curr_number.append(0)
+
+    out_i = 0
+    while curr_number:
+      out[i].append([])
+      for i, n in enumerate(curr_number):
+        out[out_i].append(freq_reports[i][n][0])
+      out_i += 1 
+      curr_number = self.__inc_curr_number(curr_number, num_per)
+    return out
+
+  def __inc_curr_number(self, curr_number, num_per):
+    print "curr number: " + str(curr_number)
+    for i, v in enumerate(curr_number):
+      curr_number[i] += 1
+      if curr_number[i] == num_per - 1:
+        curr_number[i] = 0
+        if i == len(curr_number) - 1:
+          return False 
+        continue
+      break
+
   def crack(self):
     if self.method == "sa":
       self.simulated_annealing_crack()
     elif self.method == "pm":
-      self.partial_word_match_crack()
+      self.load_new_messages()
+      print "MESSAGES: " + str(self.messages)
+      self.set_key_to_freq()
+      print "initial decryption: " + str(self.decrypt())
+
+      space_freqs = self.gen_space_freqs(2)
+
+      while self.partial_word_match_crack():
+        pass
     else:
       print "Invalid method type"
 
