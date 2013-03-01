@@ -134,6 +134,9 @@ class Analysis:
     count, counts = self.__count_letters(messages)
     total_len = count
 
+    if count == 0:
+      return 0.0
+
     for i, m in enumerate(messages):
       weight = float(counts[i])/total_len
       output += self.d.fraction_chars_in_dict(m) * weight
