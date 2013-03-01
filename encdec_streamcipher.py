@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import random
 import util
 import pickle
@@ -15,19 +13,20 @@ class Stream(EncryptorDecryptor):
           """
           Init empty keys
           """
-          self.__key = {}
-          self.__inv_key ={}
+          self.__key = []
+          self.__inv_key =[]
           
      def __generate_inv_key(self):
          """
          Generate the inverse key to decrypt
          """
+         
          self.__inv_key = self.__key
          return self.__inv_key
          
      def set_key(self,key):
          self.__key = copy.copy(key)
-         self.__inv_key = {}
+         self.__inv_key = []
          self.__generate_inv_key()
 
      def encrypt(self, plaintext):
@@ -57,6 +56,7 @@ class Stream(EncryptorDecryptor):
                fallOut = inv_key.pop()
                deciphers.append(fallOut)
                inv_key.insert(0, itemInsert)
+               
          self.__inv_key = inv_key
          out = ""
          position = ciphertext.__len__() * 8 - 1
