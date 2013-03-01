@@ -2,10 +2,10 @@
 import nfqueue
 import cracker
 import thread
-#from scapy.all import IP, TCP
+#from scapy.all import IP, TCP,
 import socket
 import time
-from dpkt import ip, tcp, hexdump
+from dpkt import ip, tcp, hexdump, udp
 
 
 """ Module that will lift messages off the network
@@ -31,7 +31,13 @@ def crack(dummy, payload):
 	packet = ip.IP(data)
 	#print packet.tcp.data
 	#print payload[TCP]
-	mData = packet.tcp.data
+	print packet.p == ip.IP_PROTO_TCP
+	mData = ""
+	if packet.p == ip.IP_PROTO_TCP:
+		mData = packet.tcp.data
+	elif packet.p == ip.IP_PROTO_UDP:
+		mData = packet.udp.data
+	
 	if len(mData) != 0:
 		outFileName = str(packet.tcp.dport) + "_id" + str(count)
 		fout = open(outFileName, 'wb')
