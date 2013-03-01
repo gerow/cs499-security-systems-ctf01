@@ -235,7 +235,7 @@ class Polyalphabetic(EncryptionCracker):
             decrypted = self.decrypt()
             split_words = decrypted[m_i].split()
           message_index += len(split_words[w_i]) + 1
-      if self.score() < 0.20:
+      if self.score() < 0.08:
         print "Unlikely space candidate"
         return
 
