@@ -1,5 +1,22 @@
 cs499-security-systems-ctf01
 ============================
+#CTF flow
+
+##Blue team
++Know how your code works
++Someone will git pull, tarball, and scp stuff to the experiment.  No word on how we make this access yet.
++Deploy keys to both server and client
++Revisit if messages are cracked
+
+##Red team
++run `install-ctf01.sh` on mitm node. 
++`sniffer.py` starts outputting files by the name `dport_idx`. Open these and feed them to different encryption modules.
+  To the best of my knowledge, we only for sure have monoalphabetic and stream cipher crackers, so we can focus on these
+  if we are getting semi-promising output.
++Spend most of time on this side, likely.  Hopefully get some messages cracked, but oh well if not.
+
+
+
 Proposed roadmap:
 
 I think our first goal should be to implement all the encryption and
