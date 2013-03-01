@@ -38,11 +38,7 @@ class Polyalphabetic(EncryptionCracker):
     raise NotImplementedError("...")
 
   def decrypt(self):
-    self.e.set_key(self.key)
-    out = collections.deque()
-    for mi in self.messages:
-      out.append(self.e.decrypt(m))
-    return out
+    return [self.e.decrypt(m) for m in self.messages]
 
   def score(self):
     chars_in_dict = self.a.fraction_chars_in_dict(self.decrypt())

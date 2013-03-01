@@ -57,10 +57,7 @@ class Monoalphabetic(EncryptionCracker):
 
   def decrypt(self):
     self.e.set_key(self.key)
-    out = collections.deque()
-    for m in self.messages:
-      out.append(self.e.decrypt(m))
-    return out
+    return [self.e.decrypt(m) for m in self.messages]
 
   def set_key_to_freq(self):
     f_report = self.a.frequency_report(self.messages)
