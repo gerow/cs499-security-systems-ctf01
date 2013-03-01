@@ -51,7 +51,7 @@ class Polyalphabetic(EncryptionCracker):
       c_num += len(self.messages[m_i])
     c_num += c_i
     slice_num = c_num % self.key_length
-    self.set(self.messages[m_i][c_i], char, slice_num)
+    self.set_no_space(self.messages[m_i][c_i], char, slice_num)
 
   def set(self, cipher, plain, alphabet):
     for k, v in self.key[alphabet].iteritems():
@@ -107,9 +107,11 @@ class Polyalphabetic(EncryptionCracker):
     print "ranking candidate space characters..."
     space_freqs = self.order_space_freqs(space_freqs)
     for sp in space_freqs:
+      self.set_key_to_freq()
       self.set_spaces(sp)
+      self.set_key_to_freq()
       self.set_spaces(("p", "z", "d", "t", "m"))
-      if self.crack_with_space_setting():
+      if self.crack_with_space_setting(("p", "z", "d", "t", "m")):
         print "DONE!"
         return
 
@@ -145,20 +147,43 @@ class Polyalphabetic(EncryptionCracker):
         self.key[alphabet][k] = self.key[alphabet][plain]
     self.key[alphabet][plain] = cipher
 
-  def crack_with_space_setting(self):
+  def set_no_space(self, cipher, plain, alphabet):
+    for k, v in self.key[alphabet].iteritems():
+      if v == cipher:
+        if k == " ":
+          return
+        self.key[alphabet][k] = self.key[alphabet][plain]
+    self.key[alphabet][plain] = cipher
+
+  def index_entire_message(self, i):
+    m_n = 0
+    while True:
+      if len(self.messages[m_n]) <= i:
+        i -= len(self.messages[m_n])
+        m_n += 1
+        continue
+      break
+
+    return self.messages[m_n][i]
+
+  def decrypted_words(self):
     decrypted = self.decrypt()
+    words = []
+    m_i = 0
+    i = 0
+   
+  def crack_with_space_setting(self, sp):
+    decrypted = self.decrypt()
+    message_index = 0
     for i in range(14):
       print "NOW ON ITERATION " + str(i)
       for m_i in range(len(decrypted)):
-        split_words = decrypted[m_i].split()
-        c_i = 0
+        split_words = decrypted[m_i].split(" ")
         for w_i in range(len(split_words)):
           print "Split words is " + str(split_words)
+          print "Non split words is " + decrypted[m_i]
           print "w_i is " + str(w_i)
-          try:
-            word = self.remove_normal_punc(split_words[w_i])
-          except IndexError:
-            break
+          word = self.remove_normal_punc(split_words[w_i])
           if self.d.word_in_dict(word):
             continue
           partials = self.d.get_partial_word_matches(word)
@@ -169,9 +194,14 @@ class Polyalphabetic(EncryptionCracker):
             self.push_key()
             if p["count"] == 0:
               break
+            #print "TRYING TO FIT PARTIAL " + p["word"]
             for k, c in enumerate(p["word"]):
-              cipher_letter = self.messages[m_i][self.get_char_index(m_i, w_i, k)]
-              self.set_i_to_char(m_i, c_i + k, c)
+              cipher_letter = self.index_entire_message(message_index + k + 1)
+              #print "GOT CIPHER LETTER " + cipher_letter
+              plain_letter = c
+              alphabet = (message_index + k) % self.key_length
+              self.set(cipher_letter, plain_letter, alphabet)
+              #self.set_i_to_char(m_i, c_i + k, c)
             score = self.score()
             if score > best_score:
               print "New best scoring is " + str(self.decrypt())
@@ -191,10 +221,7 @@ class Polyalphabetic(EncryptionCracker):
             self.key = best_key
             decrypted = self.decrypt()
             split_words = decrypted[m_i].split()
-        try:
-          c_i += len(split_words[w_i]) + 1
-        except IndexError:
-          break
+          message_index += len(split_words[w_i]) + 1
       if self.score() < 0.20:
         print "Unlikely space candidate"
         return
@@ -204,7 +231,7 @@ class Polyalphabetic(EncryptionCracker):
       return self.wordi_cache[(m_i, w_i)] + c_i
     ccount = 0
     decrypted = self.decrypt()
-    for i, word in enumerate(decrypted[m_i].split()):
+    for i, word in enumerate(decrypted[m_i].split(" ")):
       if i == w_i:
         self.wordi_cache[(m_i, w_i)] = ccount
         return ccount + c_i
