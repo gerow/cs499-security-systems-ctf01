@@ -217,11 +217,12 @@ class Polyalphabetic(EncryptionCracker):
 
     out_i = 0
     while curr_number:
-      out[i].append([])
+      out.append([])
       for i, n in enumerate(curr_number):
         out[out_i].append(freq_reports[i][n][0])
       out_i += 1 
       curr_number = self.__inc_curr_number(curr_number, num_per)
+      print "curr number: " + str(curr_number)
     return out
 
   def __inc_curr_number(self, curr_number, num_per):
@@ -233,7 +234,7 @@ class Polyalphabetic(EncryptionCracker):
         if i == len(curr_number) - 1:
           return False 
         continue
-      break
+      return curr_number
 
   def crack(self):
     if self.method == "sa":
@@ -245,6 +246,8 @@ class Polyalphabetic(EncryptionCracker):
       print "initial decryption: " + str(self.decrypt())
 
       space_freqs = self.gen_space_freqs(2)
+
+      print "space freqs " + str(space_freqs)
 
       while self.partial_word_match_crack():
         pass
