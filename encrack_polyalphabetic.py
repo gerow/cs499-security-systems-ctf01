@@ -3,6 +3,7 @@
 import copy
 
 import encdec
+import collections
 
 from encrack import *
 
@@ -38,4 +39,11 @@ class Polyalphabetic(EncryptionCracker):
 
   def decrypt(self):
     self.e.set_key(self.key)
-    out = []
+    out = collections.deque()
+    for mi in self.messages:
+      out.append(self.e.decrypt(m))
+    return out
+
+  def score(self):
+    chars_in_dict = self.a.fraction_chars_in_dict(self.decrypt())
+    return chars_in_dict

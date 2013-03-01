@@ -40,6 +40,7 @@ class Monoalphabetic(EncryptorDecryptor):
     """
     Encrypt the given plaintext using the key we have stored
     """
+    return ''.join([self.__key[c] for c in plaintext])
     out = ""
     for c in plaintext:
       out += self.__key[c]
@@ -49,10 +50,11 @@ class Monoalphabetic(EncryptorDecryptor):
     """
     Decrypt the plaintext using the inv_key we have stored
     """
-    out = ""
-    for c in ciphertext:
-      out += self.__inv_key[c]
-    return out
+    return ''.join([self.__inv_key[c] for c in ciphertext])
+    #out = ""
+    #for c in ciphertext:
+    #  out += self.__inv_key[c]
+    #return out
     
   def generate_key(self, args):
     """

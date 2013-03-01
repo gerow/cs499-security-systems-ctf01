@@ -3,6 +3,7 @@
 import encrack
 import pickle
 import os
+import collections
 
 import util
 
@@ -144,7 +145,7 @@ class Analysis:
                "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                "u", "v", "w", "x", "y", "z"]
     count = 0
-    counts = []
+    counts = collections.deque()
     for m in messages:
       strcount = 0
       for c in m:
