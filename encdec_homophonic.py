@@ -59,9 +59,9 @@ class Homophonic(EncryptorDecryptor):
           key = {}
           for i in range(100,1000):
                ciphers.append(i)
-          occurrences = { 'a':8,'b':2, 'c':3, 'd':4, 'e':12, 'f':2, 'g':2, 'h':6, 'i':6, 'j':1, 'k':1, 'l':4,
-                    'm':2, 'n':6, 'o':7, 'p':2, 'q':1, 'r':6, 's':6, 't':8, 'u':3, 'v':1, 'w':2, 'x':1,
-                    'y':2, 'z':1, '.':6,',':5, '!':1, '?':1, ' ':10}
+          occurrences = { 'a':16,'b':4, 'c':6, 'd':8, 'e':24, 'f':4, 'g':4, 'h':12, 'i':12, 'j':2, 'k':2, 'l':8,
+                    'm':4, 'n':12, 'o':14, 'p':4, 'q':2, 'r':12, 's':12, 't':16, 'u':6, 'v':2, 'w':4, 'x':2,
+                    'y':4, 'z':2, '.':12,',':10, '!':2, '?':2, ' ':20}
           for symbol in symbols:
                key[symbol] = list()
                for i in range(0, occurrences[symbol]):
